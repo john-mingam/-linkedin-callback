@@ -8,12 +8,33 @@
   <h1>Redirection Réussie</h1>
   <p>Merci d'avoir accordé l'accès à votre compte LinkedIn. Vous pouvez fermer cette page.</p>
   <script>
-    // Vous pouvez traiter le code ici si nécessaire
+    // Traiter le code d'autorisation reçu dans l'URL
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
+
     if (code) {
       console.log("Code d'autorisation reçu :", code);
-      // Vous pouvez aussi envoyer ce code à votre backend
+
+      // Envoyer le code à votre backend pour obtenir un jeton d'accès
+      fetch('http://localhost:3000/getAccessToken', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ code })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.accessToken) {
+          console.log('Access Token:', data.accessToken);
+          // Vous pouvez maintenant utiliser l'access token pour faire des requêtes à LinkedIn
+        } else {
+          console.error('Erreur lors de la récupération du jeton d\'accès');
+        }
+      })
+      .catch(error => console.error('Erreur lors de la requête :', error));
+    } else {
+      console.error("Code d'autorisation non trouvé dans l'URL");
     }
   </script>
 </body>
