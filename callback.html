@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>LinkedIn Callback</title>
+</head>
+<body>
+  <h1>Redirection Réussie</h1>
+  <p>Merci d'avoir accordé l'accès à votre compte LinkedIn. Vous pouvez fermer cette page.</p>
+  <script>
+    // Vous pouvez traiter le code ici si nécessaire
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    if (code) {
+      console.log("Code d'autorisation reçu :", code);
+      // Vous pouvez aussi envoyer ce code à votre backend
+    }
+  </script>
+</body>
+</html>
