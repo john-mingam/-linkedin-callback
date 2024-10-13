@@ -9,16 +9,21 @@
   <h1>Redirection Réussie</h1>
   <p>Merci d'avoir accordé l'accès à votre compte LinkedIn. Vous pouvez fermer cette page.</p>
 <script>
-  const urlParams = new URLSearchParams(window.location.search);
-  const code = urlParams.get('code');
-  
-  if (code) {
-    // Envoie le code au background script
-    window.opener.postMessage({ type: 'linkedin_auth_code', code: code }, '*');
-    window.close();
-  } else {
-    console.error("Erreur : Aucun code reçu.");
-  }
+ const urlParams = new URLSearchParams(window.location.search);
+const code = urlParams.get('code');
+
+if (code) {
+  chrome.runtime.sendMessage({ type: 'linkedin_auth_code', code }, (response) => {
+    if (chrome.runtime.lastError) {
+      console.error("Erreur lors de l'envoi du message à l'extension : ", chrome.runtime.lastError);
+    } else {
+      console.log("Code envoyé à l'extension, réponse : ", response);
+    }
+  });
+} else {
+  console.error("Erreur : Aucun code reçu.");
+}
+
 </script>
 
 </body>
