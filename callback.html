@@ -8,24 +8,18 @@
 <body>
   <h1>Redirection Réussie</h1>
   <p>Merci d'avoir accordé l'accès à votre compte LinkedIn. Vous pouvez fermer cette page.</p>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+  
+  if (code) {
+    // Envoie le code au background script
+    window.opener.postMessage({ type: 'linkedin_auth_code', code: code }, '*');
+    window.close();
+  } else {
+    console.error("Erreur : Aucun code reçu.");
+  }
+</script>
 
-  <script>
-    // Extraction du code d'autorisation de l'URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    
-    if (code) {
-      // Envoie le code au backend ou vers un service de fond (background.js) pour obtenir l'access token
-      chrome.runtime.sendMessage({ action: 'exchangeCodeForAccessToken', code: code }, (response) => {
-        if (response.status === 'connected') {
-          console.log('Access token reçu :', response.accessToken);
-        } else {
-          console.error('Erreur lors de l\'échange du code :', response.message);
-        }
-      });
-    } else {
-      console.error("Erreur : Aucun code reçu.");
-    }
-  </script>
 </body>
 </html>
