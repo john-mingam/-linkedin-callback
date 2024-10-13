@@ -1,40 +1,30 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LinkedIn Callback</title>
 </head>
 <body>
   <h1>Redirection Réussie</h1>
   <p>Merci d'avoir accordé l'accès à votre compte LinkedIn. Vous pouvez fermer cette page.</p>
+
   <script>
-    // Traiter le code d'autorisation reçu dans l'URL
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-
+    // Extraction du code d'autorisation de l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    
     if (code) {
-      console.log("Code d'autorisation reçu :", code);
-
-      // Envoyer le code à votre backend pour obtenir un jeton d'accès
-      fetch('http://localhost:3000/getAccessToken', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ code })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.accessToken) {
-          console.log('Access Token:', data.accessToken);
-          // Vous pouvez maintenant utiliser l'access token pour faire des requêtes à LinkedIn
+      // Envoie le code au backend ou vers un service de fond (background.js) pour obtenir l'access token
+      chrome.runtime.sendMessage({ action: 'exchangeCodeForAccessToken', code: code }, (response) => {
+        if (response.status === 'connected') {
+          console.log('Access token reçu :', response.accessToken);
         } else {
-          console.error('Erreur lors de la récupération du jeton d\'accès');
+          console.error('Erreur lors de l\'échange du code :', response.message);
         }
-      })
-      .catch(error => console.error('Erreur lors de la requête :', error));
+      });
     } else {
-      console.error("Code d'autorisation non trouvé dans l'URL");
+      console.error("Erreur : Aucun code reçu.");
     }
   </script>
 </body>
